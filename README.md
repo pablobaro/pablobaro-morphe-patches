@@ -18,29 +18,29 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0-dev.1](https://github.com/pablobaro/pablobaro-morphe-patches/releases/tag/v1.0.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
+<details open>
+<summary>📦 Spotify&nbsp;&nbsp;•&nbsp;&nbsp;11 patches</summary>
+<br>
 
-<!-- Do not modify this section by hand. The patch list is generated when release.yml creates a new release.
-     
-     If you wish for the patches list to be collapsed, then remove the word 'EXPANDED' from the comment tag above.
+**Package name:** `com.spotify.music`
 
-     If you wish to manually keep this list updated then remove the PATCHES_START and PATCHES_END 
-     comment blocks entirely. -->
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Block popup ads](#block-popup-ads) | Blocks fullscreen promotions ("Pendragon" messages) shown when opening the app. |  |
+| [Disable ad breaks](#disable-ad-breaks) | Disables the ad slots that play ads between songs. Experimental. |  |
+| [Fix third party launchers widgets](#fix-third-party-launchers-widgets) | Allows the Spotify widgets to be added to third party launchers. |  |
+| [Hide Premium tab](#hide-premium-tab) | Removes the "Premium" tab from the bottom navigation bar. |  |
+| [Hide ad sections](#hide-ad-sections) | Removes brand ad sections from the home and search page. |  |
+| [Hide ad views](#hide-ad-views) | Hides ad banners, display ads and the ad player. (Only works on older Spotify versions.) |  |
+| [Hide context menu upsells](#hide-context-menu-upsells) | Removes "Premium" entries from the context menus of songs, albums and playlists. (Only works on older Spotify versions.) |  |
+| [Hide playlist ads](#hide-playlist-ads) | Removes ads embedded into playlists. |  |
+| [Hide video ads](#hide-video-ads) | Disables the video ad plugin of the now playing view. |  |
+| [Mute audio ads](#mute-audio-ads) | Mutes the music stream while an audio ad plays and restores the volume afterwards. Enabling "Device broadcast status" in the Spotify settings improves the ad detection. |  |
+| [Sanitize sharing links](#sanitize-sharing-links) | Removes the tracking parameters (si, utm_source) from shared and copied links. |  |
 
-#### The list of patches will automatically be shown here after the first patches release is created.
+</details>
 
-&nbsp;
-
-## 🧑‍💻 Dev usage
-
-- **Make all changes to the `dev` branch.**
-- Use [Semantic commit](https://kapeli.com/cheat_sheets/Semantic_Commits.docset/Contents/Resources/Documents/index) messages (`feat:`, `fix:`, `chore:`).
-  `fix:` and `feat:` commits create new pre-releases, `chore:` commits do not.
-- Merge `dev` into `main` (do not squash) for a stable release.
-- **Always use semantic release (release.yml)**. Do not create releases or edit generated files
-  (`patches-list.json`, `patches-bundle.json`, `CHANGELOG.md`) by hand.
-
-<!-- The patches end tag is intentionally placed here so the first release will clean up 
-     this readme of all developer instructions above. -->
 <!-- PATCHES_END -->
 
 ### 🛠️ Building locally
