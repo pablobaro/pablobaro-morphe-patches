@@ -1,15 +1,14 @@
-group = "app.template"
+group = "app.pablobaro"
 
 patches {
-    // TODO: Update this section with your project details.
     about {
-        name = "UserXYZ Patches"
-        description = "Patches for apps I like"
-        source = "git@github.com:UserXYZ/morphe-patches.git"
-        author = "Awesome dev"
-        contact = "na"
-        website = "na"
-        license = "GPLv3"
+        name = "Pablobaro Morphe patches"
+        description = "Spotify patches for use with Morphe"
+        source = "git@github.com:pablobaro/pablobaro-morphe-patches.git"
+        author = "pablobaro"
+        contact = "https://github.com/pablobaro/pablobaro-morphe-patches"
+        website = "https://github.com/pablobaro/pablobaro-morphe-patches"
+        license = "GNU GPLv3"
     }
 }
 
@@ -18,6 +17,9 @@ patches {
 val patchListGeneratorClasspath = configurations.create("patchListGeneratorClasspath")
 
 dependencies {
+    // Shared bytecode helpers, bundled into the patches file.
+    implementation(libs.morphe.patches.library)
+
     compileOnly(libs.gson)
     patchListGeneratorClasspath(libs.gson)
 }
