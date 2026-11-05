@@ -1,4 +1,4 @@
-rootProject.name = "morphe-patches-template"
+rootProject.name = "pablobaro-morphe-patches"
 
 pluginManagement {
     repositories {
@@ -18,4 +18,14 @@ pluginManagement {
 
 plugins {
     id("app.morphe.patches") version "2.1.0"
+}
+
+settings {
+    extensions {
+        defaultNamespace = "app.pablobaro.extension"
+
+        // Must resolve to an absolute path (not relative),
+        // otherwise the extensions in subfolders will fail to find the proguard config.
+        proguardFiles(rootProject.projectDir.resolve("extensions/proguard-rules.pro").toString())
+    }
 }
