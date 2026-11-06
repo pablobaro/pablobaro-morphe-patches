@@ -74,7 +74,7 @@ but do **not** identify the exact rejecting function or server policy.
 
 ## Verification and rollback
 
-- Twelve unit tests pass, covering redacted exceptions, acquisition-result
+- Fifteen unit tests pass, covering redacted exceptions, acquisition-result
   handling, token confidentiality, and URL redaction. Build and
   patch application with `FULL` and `--validate` passed.
 - Device startup exercised the diagnostic, certificate-query wrappers,

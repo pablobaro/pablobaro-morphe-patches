@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** Read-only diagnostics. Never log request bodies, tokens, or exception messages. */
@@ -23,6 +24,8 @@ public final class DiagnoseClientPatch {
      * Null until resolved; never assumed, so a renamed app never logs another installed app's certificates.
      */
     private static volatile String ownPackage;
+    private static volatile boolean processNameLookedUp;
+    private static volatile Callable<String> processNameSource = DiagnoseClientPatch::currentProcessName;
     private static final AtomicInteger tokenResultsLogged = new AtomicInteger();
     private static final AtomicInteger responsesLogged = new AtomicInteger();
     private static final AtomicInteger homeFailuresLogged = new AtomicInteger();
@@ -63,14 +66,36 @@ public final class DiagnoseClientPatch {
         if (packageName != null && !packageName.isEmpty()) ownPackage = packageName;
     }
 
-    /** Package queries can run before Application.onCreate (e.g. from a ContentProvider), so resolve lazily. */
+    /**
+     * Package queries can run before Application.onCreate (e.g. from a ContentProvider), so resolve lazily.
+     * The process name is looked up at most once: this runs on every wrapped getPackageInfo call,
+     * and onStartup sets the package anyway if the lookup failed.
+     */
     static boolean isOwnPackage(String packageName) {
         String own = ownPackage;
-        if (own == null) {
-            rememberOwnPackage(packageFromProcessName(currentProcessName()));
-            own = ownPackage;
-        }
+        if (own == null && !processNameLookedUp) own = lookUpOwnPackage();
         return own != null && own.equals(packageName);
+    }
+
+    /** Synchronized so a concurrent caller waits for the lookup instead of seeing it half done. */
+    private static synchronized String lookUpOwnPackage() {
+        if (ownPackage == null && !processNameLookedUp) {
+            String processName = null;
+            try {
+                processName = processNameSource.call();
+            } catch (Throwable ignored) {
+            }
+            rememberOwnPackage(packageFromProcessName(processName));
+            processNameLookedUp = true;
+        }
+        return ownPackage;
+    }
+
+    /** Restores the unresolved state. Tests only. */
+    static synchronized void resetOwnPackage(Callable<String> source) {
+        ownPackage = null;
+        processNameLookedUp = false;
+        processNameSource = source;
     }
 
     /** The default process is named after the package; secondary ones add a ":name" suffix. */

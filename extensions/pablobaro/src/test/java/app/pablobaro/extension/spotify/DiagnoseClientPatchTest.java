@@ -1,6 +1,14 @@
 package app.pablobaro.extension.spotify;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -8,6 +16,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DiagnoseClientPatchTest {
+    @Before
+    public void resetOwnPackage() {
+        // The package is static state; never touch the Android stubs from the JVM tests.
+        DiagnoseClientPatch.resetOwnPackage(() -> null);
+    }
+
     public static class TokenResult {
         private final int resultCase_;
         private final Object result_;
@@ -169,5 +183,51 @@ public class DiagnoseClientPatchTest {
         DiagnoseClientPatch.rememberOwnPackage(null);
         DiagnoseClientPatch.rememberOwnPackage("");
         assertTrue(DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
+    }
+
+    @Test
+    public void resolvesRunningPackageFromProcessBeforeStartup() {
+        DiagnoseClientPatch.resetOwnPackage(() -> "com.spotify.music.morphe:remote");
+        assertTrue(DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
+        assertFalse(DiagnoseClientPatch.isOwnPackage("com.spotify.music"));
+    }
+
+    @Test
+    public void looksUpProcessNameOnlyOnceAndStartupStillResolves() {
+        AtomicInteger lookups = new AtomicInteger();
+        DiagnoseClientPatch.resetOwnPackage(() -> {
+            lookups.incrementAndGet();
+            throw new IllegalStateException("no process name yet");
+        });
+        for (int i = 0; i < 3; i++) assertFalse(DiagnoseClientPatch.isOwnPackage("com.spotify.music"));
+        assertEquals(1, lookups.get());
+
+        DiagnoseClientPatch.rememberOwnPackage("com.spotify.music.morphe");
+        assertTrue(DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
+        assertEquals(1, lookups.get());
+    }
+
+    @Test
+    public void concurrentCallersWaitForTheLookup() throws Exception {
+        CountDownLatch lookupStarted = new CountDownLatch(1);
+        AtomicInteger lookups = new AtomicInteger();
+        DiagnoseClientPatch.resetOwnPackage(() -> {
+            lookups.incrementAndGet();
+            lookupStarted.countDown();
+            Thread.sleep(200);
+            return "com.spotify.music.morphe";
+        });
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            Future<Boolean> first = executor.submit(() -> DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
+            assertTrue(lookupStarted.await(5, TimeUnit.SECONDS));
+            Future<Boolean> second = executor.submit(() -> DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
+            assertTrue(first.get(5, TimeUnit.SECONDS));
+            assertTrue(second.get(5, TimeUnit.SECONDS));
+            // Without the lock the second caller would start its own lookup.
+            assertEquals(1, lookups.get());
+        } finally {
+            executor.shutdownNow();
+        }
     }
 }
