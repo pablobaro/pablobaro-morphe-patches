@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-05T15:44:27",
-  "description": "## 1.0.0 (2026-11-05)\n\n### ✨ New Features\n\n* add Spotify patches ([768734d](https://github.com/pablobaro/pablobaro-morphe-patches/commit/768734d818d71c242be9200cfc0e924ae003c02a))",
-  "download_url": "https://github.com/pablobaro/pablobaro-morphe-patches/releases/download/v1.0.0/patches-1.0.0.mpp",
+  "created_at": "2026-11-06T19:51:43",
+  "description": "## [1.1.0-dev.1](https://github.com/pablobaro/pablobaro-morphe-patches/compare/v1.0.0...v1.1.0-dev.1) (2026-11-06)\n\n### ✨ New Features\n\n* **spotify:** install alongside the original app and add client diagnostics ([59d1fd7](https://github.com/pablobaro/pablobaro-morphe-patches/commit/59d1fd74db37e4b498f7554c3f268bd6c4f52697)), closes [#2](https://github.com/pablobaro/pablobaro-morphe-patches/issues/2)\n\n### 🐛 Bug Fixes\n\n* **spotify:** inspect the running package in client diagnostics ([ca72467](https://github.com/pablobaro/pablobaro-morphe-patches/commit/ca724676fc548d31eb2addcab79b25aed44fd048))\n* **spotify:** look up the diagnostics package once and thread-safely ([2375cec](https://github.com/pablobaro/pablobaro-morphe-patches/commit/2375cec041cdc96c009434dea6b8d1c9d114a173))\n* **spotify:** resolve the running package before diagnostics startup ([649c442](https://github.com/pablobaro/pablobaro-morphe-patches/commit/649c4426f20603629806316a8afa3826a0831238))",
+  "download_url": "https://github.com/pablobaro/pablobaro-morphe-patches/releases/download/v1.1.0-dev.1/patches-1.1.0-dev.1.mpp",
   "signature_download_url": "",
-  "version": "1.0.0"
+  "version": "1.1.0-dev.1"
 }
