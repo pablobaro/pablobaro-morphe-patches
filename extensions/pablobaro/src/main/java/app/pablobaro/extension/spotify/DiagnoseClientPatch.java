@@ -18,8 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("unused")
 public final class DiagnoseClientPatch {
     private static final String TAG = "SpotifyClientDiag";
-    /** The running app's package, which differs from the original when "Change package name" is applied. */
-    private static volatile String ownPackage = "com.spotify.music";
+    /**
+     * The running app's package, which differs from the original when "Change package name" is applied.
+     * Null until resolved; never assumed, so a renamed app never logs another installed app's certificates.
+     */
+    private static volatile String ownPackage;
     private static final AtomicInteger tokenResultsLogged = new AtomicInteger();
     private static final AtomicInteger responsesLogged = new AtomicInteger();
     private static final AtomicInteger homeFailuresLogged = new AtomicInteger();
@@ -30,11 +33,12 @@ public final class DiagnoseClientPatch {
     public static void onStartup(Context context) {
         try {
             Log.i(TAG, "diagnostics=v5; behavior=unchanged");
-            ownPackage = context.getPackageName();
+            String packageName = context.getPackageName();
+            rememberOwnPackage(packageName);
             PackageManager pm = context.getPackageManager();
-            Log.i(TAG, "package=" + ownPackage);
-            Log.i(TAG, "installer=" + pm.getInstallerPackageName(ownPackage));
-            observe(pm.getPackageInfo(ownPackage, Build.VERSION.SDK_INT >= 28
+            Log.i(TAG, "package=" + packageName);
+            Log.i(TAG, "installer=" + pm.getInstallerPackageName(packageName));
+            observe(pm.getPackageInfo(packageName, Build.VERSION.SDK_INT >= 28
                     ? PackageManager.GET_SIGNING_CERTIFICATES : PackageManager.GET_SIGNATURES));
         } catch (Throwable error) {
             safeLog("startup diagnostic failed; " + describeFailure(error));
@@ -55,9 +59,42 @@ public final class DiagnoseClientPatch {
         return info;
     }
 
+    static void rememberOwnPackage(String packageName) {
+        if (packageName != null && !packageName.isEmpty()) ownPackage = packageName;
+    }
+
+    /** Package queries can run before Application.onCreate (e.g. from a ContentProvider), so resolve lazily. */
+    static boolean isOwnPackage(String packageName) {
+        String own = ownPackage;
+        if (own == null) {
+            rememberOwnPackage(packageFromProcessName(currentProcessName()));
+            own = ownPackage;
+        }
+        return own != null && own.equals(packageName);
+    }
+
+    /** The default process is named after the package; secondary ones add a ":name" suffix. */
+    static String packageFromProcessName(String processName) {
+        if (processName == null) return null;
+        int separator = processName.indexOf(':');
+        String packageName = separator >= 0 ? processName.substring(0, separator) : processName;
+        return packageName.isEmpty() ? null : packageName;
+    }
+
+    private static String currentProcessName() {
+        try {
+            if (Build.VERSION.SDK_INT >= 28) return android.app.Application.getProcessName();
+            // Before API 28 there is no public API, and hidden API restrictions do not apply yet.
+            return (String) Class.forName("android.app.ActivityThread")
+                    .getMethod("currentProcessName").invoke(null);
+        } catch (Throwable error) {
+            return null;
+        }
+    }
+
     private static void observe(PackageInfo info) {
         try {
-            if (info == null || !ownPackage.equals(info.packageName)) return;
+            if (info == null || !isOwnPackage(info.packageName)) return;
             if (info.signatures != null) logSignatures("legacy", info.signatures);
             if (Build.VERSION.SDK_INT >= 28 && info.signingInfo != null) {
                 logSignatures("contents", info.signingInfo.getApkContentsSigners());

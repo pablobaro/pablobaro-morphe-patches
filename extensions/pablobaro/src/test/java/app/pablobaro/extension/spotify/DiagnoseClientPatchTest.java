@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DiagnoseClientPatchTest {
@@ -144,5 +145,29 @@ public class DiagnoseClientPatchTest {
         };
         assertTrue(DiagnoseClientPatch.describeHomeFailure(broken).contains("cause=0"));
         assertFalse(DiagnoseClientPatch.describeHomeFailure(broken).contains("secret"));
+    }
+
+    @Test
+    public void derivesPackageFromProcessName() {
+        assertEquals("com.spotify.music.morphe",
+                DiagnoseClientPatch.packageFromProcessName("com.spotify.music.morphe"));
+        assertEquals("com.spotify.music.morphe",
+                DiagnoseClientPatch.packageFromProcessName("com.spotify.music.morphe:remote"));
+        assertNull(DiagnoseClientPatch.packageFromProcessName(":remote"));
+        assertNull(DiagnoseClientPatch.packageFromProcessName(""));
+        assertNull(DiagnoseClientPatch.packageFromProcessName(null));
+    }
+
+    @Test
+    public void observesTheRunningPackageNotTheOriginalOne() {
+        DiagnoseClientPatch.rememberOwnPackage("com.spotify.music.morphe");
+        assertTrue(DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
+        assertFalse(DiagnoseClientPatch.isOwnPackage("com.spotify.music"));
+        assertFalse(DiagnoseClientPatch.isOwnPackage(null));
+
+        // An empty or missing name never replaces the resolved package.
+        DiagnoseClientPatch.rememberOwnPackage(null);
+        DiagnoseClientPatch.rememberOwnPackage("");
+        assertTrue(DiagnoseClientPatch.isOwnPackage("com.spotify.music.morphe"));
     }
 }
