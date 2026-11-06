@@ -17,6 +17,7 @@ val changePackageNamePatch = resourcePatch(
     name = "Change package name",
     description = "Changes the package name and app name so the patched app can be installed " +
         "alongside the original Spotify app.",
+    default = false,
 ) {
     compatibleWith(COMPATIBILITY_SPOTIFY)
 
