@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/pablobaro/pablobaro-morphe-patches/compare/v1.1.0...v1.1.1) (2026-11-06)
+
+### 🐛 Bug Fixes
+
+* **spotify:** make "Change package name" opt-in ([172cff4](https://github.com/pablobaro/pablobaro-morphe-patches/commit/172cff4a0f426226d2a3f28d910390a5176830b9))
+
 ## [1.1.1-dev.1](https://github.com/pablobaro/pablobaro-morphe-patches/compare/v1.1.0...v1.1.1-dev.1) (2026-11-06)
 
 ### 🐛 Bug Fixes
