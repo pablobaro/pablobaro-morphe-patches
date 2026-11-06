@@ -17,7 +17,8 @@ It does not fix playback, change signature values, or bypass integrity checks.
    adb logcat -d -v threadtime -s SpotifyClientDiag:I '*:S'
    ```
 
-The diagnostic records the installer, public signing-certificate hashes,
+The diagnostic records the running package name (also when "Change package name"
+is applied), its installer, public signing-certificate hashes,
 client-token acquisition outcomes, allowlisted HTTP categories/statuses, and
 whether the observed integrity request returns or throws. It never records
 request bodies, headers, raw URLs, token values, account details, or exception messages. A response
@@ -72,7 +73,7 @@ but do **not** identify the exact rejecting function or server policy.
 
 ## Verification and rollback
 
-- Seven unit tests pass, covering redacted exceptions, acquisition-result
+- Ten unit tests pass, covering redacted exceptions, acquisition-result
   handling, token confidentiality, and URL redaction. Build and
   patch application with `FULL` and `--validate` passed.
 - Device startup exercised the diagnostic, certificate-query wrappers,

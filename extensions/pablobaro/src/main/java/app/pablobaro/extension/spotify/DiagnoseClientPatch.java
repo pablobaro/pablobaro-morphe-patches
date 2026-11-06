@@ -18,7 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("unused")
 public final class DiagnoseClientPatch {
     private static final String TAG = "SpotifyClientDiag";
-    private static final String PACKAGE = "com.spotify.music";
+    /** The running app's package, which differs from the original when "Change package name" is applied. */
+    private static volatile String ownPackage = "com.spotify.music";
     private static final AtomicInteger tokenResultsLogged = new AtomicInteger();
     private static final AtomicInteger responsesLogged = new AtomicInteger();
     private static final AtomicInteger homeFailuresLogged = new AtomicInteger();
@@ -29,9 +30,11 @@ public final class DiagnoseClientPatch {
     public static void onStartup(Context context) {
         try {
             Log.i(TAG, "diagnostics=v5; behavior=unchanged");
+            ownPackage = context.getPackageName();
             PackageManager pm = context.getPackageManager();
-            Log.i(TAG, "installer=" + pm.getInstallerPackageName(PACKAGE));
-            observe(pm.getPackageInfo(PACKAGE, Build.VERSION.SDK_INT >= 28
+            Log.i(TAG, "package=" + ownPackage);
+            Log.i(TAG, "installer=" + pm.getInstallerPackageName(ownPackage));
+            observe(pm.getPackageInfo(ownPackage, Build.VERSION.SDK_INT >= 28
                     ? PackageManager.GET_SIGNING_CERTIFICATES : PackageManager.GET_SIGNATURES));
         } catch (Throwable error) {
             safeLog("startup diagnostic failed; " + describeFailure(error));
@@ -54,7 +57,7 @@ public final class DiagnoseClientPatch {
 
     private static void observe(PackageInfo info) {
         try {
-            if (info == null || !PACKAGE.equals(info.packageName)) return;
+            if (info == null || !ownPackage.equals(info.packageName)) return;
             if (info.signatures != null) logSignatures("legacy", info.signatures);
             if (Build.VERSION.SDK_INT >= 28 && info.signingInfo != null) {
                 logSignatures("contents", info.signingInfo.getApkContentsSigners());
