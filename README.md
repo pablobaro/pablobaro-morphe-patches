@@ -34,9 +34,9 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.3](https://github.com/pablobaro/pablobaro-morphe-patches/releases/tag/v1.1.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
+> **[v1.2.0-dev.1](https://github.com/pablobaro/pablobaro-morphe-patches/releases/tag/v1.2.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
 <details open>
-<summary>📦 Spotify&nbsp;&nbsp;•&nbsp;&nbsp;13 patches</summary>
+<summary>📦 Spotify&nbsp;&nbsp;•&nbsp;&nbsp;14 patches</summary>
 <br>
 
 **Package name:** `com.spotify.music`
@@ -50,6 +50,7 @@ Click the button below, or manually add this repo url to Morphe Manager: https:/
 |----------|----------------|-----------|
 | [Block popup ads](#block-popup-ads) | Blocks fullscreen promotions ("Pendragon" messages) shown when opening the app. |  |
 | [Change package name](#change-package-name) | Changes the package name and app name so the patched app can be installed alongside the original Spotify app. | • Package name<br>• App name |
+| [Custom theme](#custom-theme) | Applies a custom theme. Defaults to an AMOLED theme with a pure black background. | • Background color<br>• Secondary background color<br>• Accent color<br>• Pressed accent color<br>• Dark player |
 | [Diagnose Spotify client](#diagnose-spotify-client) | Logs signing-certificate queries and integrity-request outcomes without changing them. Does not log authentication tokens or account data. Experimental diagnostic, not a playback fix. |  |
 | [Disable ad breaks](#disable-ad-breaks) | Disables the ad slots that play ads between songs. Experimental. |  |
 | [Fix third party launchers widgets](#fix-third-party-launchers-widgets) | Allows the Spotify widgets to be added to third party launchers. |  |
