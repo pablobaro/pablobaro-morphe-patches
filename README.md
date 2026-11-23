@@ -9,17 +9,23 @@ removing tracking parameters from shared links.
 
 ### ⚠️ Known limitation: "Something went wrong" and no playback
 
-Spotify currently refuses to serve content to any build that is not signed by Spotify.
+Spotify may refuse to serve content to builds that are not signed by Spotify.
 A patched app is always re-signed, so after logging in it may show "Something went wrong"
 on the Home tab and fail to play tracks, or skip them after a few seconds.
 
-- This does not depend on which patches are enabled. The official APK, re-signed and with
-  no patches applied, fails the same way, while the Play Store install works with the same account.
+- **Use a secondary account, not your main one.** Some users report that their accounts
+  stopped working in the patched app. Use it at your own risk.
+- **If it stops working, try a different or new account.** This has helped some users, but it is
+  a workaround and not a guaranteed fix: the new account may stop working later too.
+- If no account works, uninstall the patched app and install the official one from the Play Store.
+- It does not affect everyone. The same version can work with one account and fail with another,
+  and the exact trigger is not known.
+- It does not appear to depend on which patches are enabled. The official APK, re-signed and with
+  no patches applied, failed the same way, while the Play Store install worked with the same account.
 - It was reproduced on Spotify 9.1.94.1929 and 9.1.98.621.
-- Spotify's server answers the Home request with an empty response. The catalog appears to
-  require a Google Play Integrity attestation tied to the app's signing certificate.
-- There is no known fix that works without root. To get a working app back, uninstall the
-  patched app and install the official one from the Play Store.
+- Where it was traced, Spotify's server answered the Home request with an empty response. The catalog
+  appears to require a Google Play Integrity attestation tied to the app's signing certificate, so this
+  is hard to fix for now and there is no known fix that works without root.
 
 See [issue #9](https://github.com/pablobaro/pablobaro-morphe-patches/issues/9) for details and updates.
 
